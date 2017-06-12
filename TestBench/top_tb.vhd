@@ -67,6 +67,12 @@ begin
 		LOAD_DATA <= '1';
 		wait for 10 ns;
 		LOAD_DATA <= '0';
+		wait for 10 ns;
+		Din <= "01010111";
+		wait for 290 ns;
+		LOAD_DATA <= '1';
+		wait for 40 ns;
+		LOAD_DATA <= '0';
 		
 		
 		wait for 1 us;	 

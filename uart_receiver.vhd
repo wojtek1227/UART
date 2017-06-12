@@ -40,10 +40,11 @@ end uart_receiver;
 --}} End of automatically maintained section
 
 architecture behavioral of uart_receiver is	   
-	type State_type is (Idle, Start, Data, Stop);
+	type State_type is (Idle, Data);
 	signal RX_int : std_logic;
 	signal RX_int2 : std_logic;
 	signal State : State_type;
+	signal data_reg : std_logic_vector(7 downto 0);
 	
 	
 begin
@@ -69,6 +70,7 @@ begin
 								State <= Data;
 								cnt := 0;
 								received_bits := 0;
+								RX_flag <= '0';
 							else
 								cnt := cnt + 1;
 								--State <= Idle;
@@ -81,7 +83,7 @@ begin
 					when Data =>
 						if received_bits < 8 then
 							if cnt = 15 then 
-								Dout(received_bits) <= RX_int2;
+								data_reg(received_bits) <= RX_int2;
 								cnt := 0;
 								received_bits := received_bits + 1;
 							else 
@@ -92,6 +94,7 @@ begin
 								if RX_int2 = '1' then
 									RX_flag <= '1';
 									State <= Idle;
+									Dout <= data_reg;
 								else
 									RX_error <='1';
 									State <= Idle;
