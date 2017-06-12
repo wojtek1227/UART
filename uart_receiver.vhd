@@ -32,14 +32,15 @@ entity uart_receiver is
 		CE : in std_logic;
 		RX : in std_logic;
 		Dout : out std_logic_vector(7 downto 0);
-		RX_flag	: out std_logic
+		RX_flag	: out std_logic;
+		RX_error : out std_logic
 		);
 end uart_receiver;
 
 --}} End of automatically maintained section
 
 architecture behavioral of uart_receiver is	   
-	type State_type is (Idle, Receive);
+	type State_type is (Idle, Start, Data, Stop);
 	signal RX_int : std_logic;
 	signal RX_int2 : std_logic;
 	signal State : State_type;
@@ -53,8 +54,8 @@ begin
 	end process	;
 	
 	process(RST, CLK)
-	variable cnt: integer range 0 to 16;
-	variable received_bits : integer range 0 to 8;
+		variable cnt: integer range 0 to 16;
+		variable received_bits : integer range 0 to 8;
 	begin
 		if RST='1' then
 			Dout <= (others => '0');
@@ -63,24 +64,43 @@ begin
 			if CE = '1' then
 				case State is
 					when Idle =>
-						if (RX_int2 = 0) and (cnt = 0) then
-							cnt = cnt + 1;	
-						elsif (RX_int2 = 0) and (cnt =8) then
-							cnt := 0;
-							received_bits := 0;
-							State <= Receive;
-						elsif (RX_int2 = 1) then
-							cnt := 0;
-							State <= Idle;
+						if RX_int2 = '0' then
+							if cnt = 7 then
+								State <= Data;
+								cnt := 0;
+								received_bits := 0;
+							else
+								cnt := cnt + 1;
+								--State <= Idle;
+							end if;
 						else
-							cnt := cnt + 1;
-						end if;
+							--State <= Idle;
+							cnt := 0;
+						end if;	
 					
-					when Receive =>
-					if received_bits < 8 then
-						if cnt = 16 then 
-							Dout(received_bits) <= RX_int2;
-							cnt :=
+					when Data =>
+						if received_bits < 8 then
+							if cnt = 15 then 
+								Dout(received_bits) <= RX_int2;
+								cnt := 0;
+								received_bits := received_bits + 1;
+							else 
+								cnt := cnt + 1;
+							end if;
+						else
+							if cnt = 16 then
+								if RX_int2 = '1' then
+									RX_flag <= '1';
+									State <= Idle;
+								else
+									RX_error <='1';
+									State <= Idle;
+								end if;
+							else
+								cnt := cnt + 1;
+							end if;
+						end if;		
+					
 					when others =>
 						null;	
 					
