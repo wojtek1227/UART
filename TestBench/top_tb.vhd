@@ -73,8 +73,18 @@ begin
 		LOAD_DATA <= '1';
 		wait for 40 ns;
 		LOAD_DATA <= '0';
-		
-		
+		wait until RX_flag = '1';
+		Din <= "11010111";
+		wait for 5 ns;
+		LOAD_DATA <= '1';
+		wait for 10 ns;
+		LOAD_DATA <= '0';
+		wait until RX_flag = '1';
+		Din <= "11110111";
+		wait for 5 ns;
+		LOAD_DATA <= '1';
+		wait for 10 ns;
+		LOAD_DATA <= '0';
 		wait for 1 us;	 
 		END_SIM <= TRUE;
 		--	end of stimulus events
