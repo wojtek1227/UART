@@ -97,7 +97,7 @@ begin  -- of stimulus process
 	Din <= "01001111";
 	
 	
-    wait for 250 ns;	 
+    wait for 1 us;	 
 	END_SIM <= TRUE;
 --	end of stimulus events
 	wait;
@@ -107,13 +107,13 @@ CLOCK_CLK : process
 begin
 	if END_SIM = FALSE then
 		CLK <= '0';
-		wait for 5 ns; 
+		wait for 2 ns; 
 	else
 		wait;
 	end if;
 	if END_SIM = FALSE then
 		CLK <= '1';
-		wait for 5 ns;
+		wait for 2 ns;
 	else
 		wait;
 	end if;

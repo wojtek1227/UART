@@ -21,6 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
+use IEEE.STD_LOGIC_UNSIGNED.all;
 
 entity uart_transmiter is
 	port(
@@ -41,11 +42,11 @@ architecture behavioral of uart_transmiter is
 	signal State:State_type;
 	signal data_reg: std_logic_vector(7 downto 0); 
 	signal TX_int:std_logic := '1';
+	signal cnt: std_logic_vector(3 downto 0);
 	
 begin
 	process(RST, CLK)
-	variable sent_bits: integer range 0 to 8;	 
-	variable cnt: integer range 0 to 16;
+		variable sent_bits: integer range 0 to 8;	 
 	begin
 		if RST = '1' then
 			--Reset
@@ -59,39 +60,51 @@ begin
 					when idle =>
 						if LOAD_DATA = '1' then
 							data_reg <= Din;	--Saving data to send
-							TX_int <= '0'; 		-- start bit
+							
 							TX_READY <= '0';
 							sent_bits := 0;
 							State <= Start;
-							cnt := 0;
+							cnt <= (others => '0');
 						else
 							TX_int <= '1';
 							State <= idle;
 							TX_READY <= '1';
-						end if;			
+						end if;	
+					
 					when Start =>
-					if cnt < 16 then
-						cnt := cnt + 1;
-					else 
-						cnt := 0;
-						State <= Shifting;
-						end if;
-						
-					when shifting => 
-						if sent_bits < 8 then
-							TX_int <= data_reg(sent_bits);
-							sent_bits := sent_bits + 1;
+						if cnt < 15 then
+							TX_int <= '0'; 		-- start bit
+							cnt <= cnt + 1;
+						else 
+							cnt <= (others => '0');
 							State <= Shifting;
-						else
-							--State <= Stop; 
-							TX_int <= '1';
-							State <= Idle;
-							TX_READY <= '1';
 						end if;
 					
+					when Shifting => 
+						if sent_bits < 8 then
+							if cnt < 15 then
+								cnt <= cnt + 1;
+								TX_int <= data_reg(sent_bits);
+							else
+								cnt <= (others => '0');
+								sent_bits := sent_bits + 1;
+							end if;
+						else
+							State <= Stop;
+							TX_int <= '1';
+							
+						end if;
+						
+					
 					when stop =>
-						TX_READY <= '1';
-						State <= Idle; 
+						if cnt < 15 then
+							cnt <= cnt + 1;
+						else
+							cnt <= (others => '0');
+							TX_READY <= '1';
+							TX_int <= '1';
+							State <= Idle;
+						end if;
 					
 					when others =>
 						State <= Idle;	  

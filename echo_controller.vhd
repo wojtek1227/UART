@@ -45,12 +45,13 @@ begin
 	-- enter your statements here --
 	process(RST, CLK)
 	begin
-		if RST = 1 then
+		if RST = '1' then
 			LOAD_DATA <= '0';
 		elsif rising_edge(CLK) then
 			if CE = '1' then
 				if RX_flag = '1' and TX_ready = '1' then
-					LOAD_DATA <= '1';
+					LOAD_DATA <= '1'; 
+					end if;
 				
 			end if;
 		end if;
