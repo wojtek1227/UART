@@ -25,8 +25,8 @@ use IEEE.STD_LOGIC_1164.all;
 entity uart_transmiter is
 	port(
 		CLK : in STD_LOGIC; 					--Clock
-		CE : in STD_LOGIC;						--Clock enable
 		RST : in STD_LOGIC;						--Reset
+		CE : in STD_LOGIC;						--Clock enable
 		LOAD_DATA : in STD_LOGIC;				--Load data to transmiter
 		Din : in STD_LOGIC_VECTOR(7 downto 0);	--Data bus
 		TX : out STD_LOGIC;						--Transmiter output
@@ -37,14 +37,15 @@ end uart_transmiter;
 --}} End of automatically maintained section
 
 architecture behavioral of uart_transmiter is   
-	type State_type is (Idle, Shifting, Stop);
+	type State_type is (Idle, Start,Shifting, Stop);
 	signal State:State_type;
 	signal data_reg: std_logic_vector(7 downto 0); 
 	signal TX_int:std_logic := '1';
 	
 begin
 	process(RST, CLK)
-		variable sent_bits: integer range 0 to 8;
+	variable sent_bits: integer range 0 to 8;	 
+	variable cnt: integer range 0 to 16;
 	begin
 		if RST = '1' then
 			--Reset
@@ -61,13 +62,21 @@ begin
 							TX_int <= '0'; 		-- start bit
 							TX_READY <= '0';
 							sent_bits := 0;
-							State <= Shifting;
+							State <= Start;
+							cnt := 0;
 						else
 							TX_int <= '1';
 							State <= idle;
 							TX_READY <= '1';
 						end if;			
-					
+					when Start =>
+					if cnt < 16 then
+						cnt := cnt + 1;
+					else 
+						cnt := 0;
+						State <= Shifting;
+						end if;
+						
 					when shifting => 
 						if sent_bits < 8 then
 							TX_int <= data_reg(sent_bits);
