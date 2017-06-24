@@ -66,7 +66,7 @@ begin
 				case State is
 					when Idle =>
 						if RX_int2 = '0' then
-							if cnt = 7 then
+							if cnt > 6 then
 								State <= Data;
 								cnt := 0;
 								received_bits := 0;

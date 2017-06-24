@@ -27,7 +27,8 @@ architecture TB_ARCHITECTURE of top_echo_tb is
 	signal RX : STD_LOGIC;
 	-- Observed signals - signals mapped to the output ports of tested entity
 	signal TX : STD_LOGIC;
-
+	--Signal is used to stop clock signal generators
+	signal END_SIM: BOOLEAN:=FALSE;
 	-- Add your code here ...
 
 begin
@@ -43,6 +44,55 @@ begin
 		);
 
 	-- Add your stimulus here ...
+	STIMULUS: process
+	begin
+	RST <= '1';
+	RX <= '1'; 
+	CE <= '0';
+	wait for 20 ns;
+	RST <= '0';
+	wait for 20 ns;
+	CE <= '1';
+	wait for 10 ns;
+	RX <= '0';
+	wait for 512 ns; 
+	RX <= '1';		  -- bit 0
+	wait for 512 ns; 
+	RX <= '0';		  -- bit 1
+	wait for 512 ns;
+	RX <= '1';		  -- bit 2
+	wait for 512 ns;
+	RX <= '0';		  -- bit 3
+	wait for 512 ns;
+	RX <= '1';		  -- bit 4
+	wait for 512 ns; 
+	RX <= '0';		  -- bit 5
+	wait for 512 ns;
+	RX <= '1';		  -- bit 6
+	wait for 512 ns;
+	RX <= '0';		  -- bit 7
+	wait for 512 ns;
+	RX <= '1';		  -- stop bit
+	wait for 30 us;	 
+	END_SIM <= TRUE;
+	wait;	
+	end process;
+	
+	CLOCK_CLK : process
+	begin
+		if END_SIM = FALSE then
+			CLK <= '0';
+			wait for 1 ns; 
+		else
+			wait;
+		end if;
+		if END_SIM = FALSE then
+			CLK <= '1';
+			wait for 1 ns;
+		else
+			wait;
+		end if;
+	end process;
 
 end TB_ARCHITECTURE;
 

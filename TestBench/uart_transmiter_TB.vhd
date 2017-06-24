@@ -57,44 +57,23 @@ begin
 STIMULUS: process
 begin  -- of stimulus process
 --wait for <time to next event>; -- <current time>
-	RST <= '0';
+	RST <= '1';
 	CE <= '0';
 	LOAD_DATA <= '0';
 	wait for 12 ns;
-	RST <= '1';
+	RST <= '0';
+	CE <= '1';
 	wait for 8 ns;
-	RST <= '0';
-	wait for 20 ns;
-	CE <= '1';
-	wait for 20 ns;
-	Din <= "11010110";
-	wait for 10 ns;
+	Din <= "01011100";
+	wait for 2 ns;
 	LOAD_DATA <= '1';
-	wait for 40 ns;
-	RST <= '1';	
-	wait for 3 ns;
-	RST <= '0';		
-	wait for 10 ns;
-	RST <= '1';
-	wait for 20 ns;
-	RST <= '0';
-	wait for 102 ns;
-	CE <= '0';
-	wait for 15 ns;
-	CE <= '1';
-	wait for 50 ns;
-	CE <= '0';
-	wait for 50 ns;
-	CE <= '1'; 
-	wait for 80 ns;
+	wait for 2 ns;
 	LOAD_DATA <= '0';
-	wait for 100 ns;
-	LOAD_DATA <= '1';
-	Din <= "01010101";
-	wait for 10 ns;
-	Din <= "11001010";
-	wait for 100 ns;
-	Din <= "01001111";
+	wait for 20 ns; 
+	CE <= '1'; 
+	wait for 20 ns;
+	CE <= '1';
+	LOAD_DATA <= '0';
 	
 	
     wait for 1 us;	 
@@ -107,13 +86,13 @@ CLOCK_CLK : process
 begin
 	if END_SIM = FALSE then
 		CLK <= '0';
-		wait for 2 ns; 
+		wait for 1 ns; 
 	else
 		wait;
 	end if;
 	if END_SIM = FALSE then
 		CLK <= '1';
-		wait for 2 ns;
+		wait for 1 ns;
 	else
 		wait;
 	end if;

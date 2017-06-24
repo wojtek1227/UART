@@ -26,40 +26,44 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 
 entity echo_controller is
-	 port(
-		 CLK : in STD_LOGIC;
-		 CE : in STD_LOGIC;
-		 RST : in STD_LOGIC;
-		 RX_flag : in STD_LOGIC;
-		 RX_error : in STD_LOGIC;
-		 TX_ready : in STD_LOGIC;
-		 LOAD_DATA : out STD_LOGIC
-	     );
+	port(
+		CLK : in STD_LOGIC;
+		CE : in STD_LOGIC;
+		RST : in STD_LOGIC;
+		RX_flag : in STD_LOGIC;
+		RX_error : in STD_LOGIC;
+		TX_ready : in STD_LOGIC;
+		LOAD_DATA : out STD_LOGIC
+		);
 end echo_controller;
 
 --}} End of automatically maintained section
 
-architecture echo_controller of echo_controller is
+architecture echo_controller of echo_controller is 
+	signal received: std_logic_vector(1 downto 0);
 begin
-
+	
 	-- enter your statements here --
 	process(RST, CLK)
 	begin
 		if RST = '1' then
 			LOAD_DATA <= '0';
+			received <= (others => '0');
 		elsif rising_edge(CLK) then
 			if CE = '1' then
-				if RX_flag = '1' and TX_ready = '1' then
-					LOAD_DATA <= '1'; 
-					end if;
-				
+				if received = "01" and TX_ready = '1' then 
+					LOAD_DATA <= '1';
+				else
+					LOAD_DATA <= '0';
+					received <= received(0) & RX_flag;
+				end if;
 			end if;
 		end if;
 		
-			
+		
 		
 		
 	end process;
 	
-
+	
 end echo_controller;
