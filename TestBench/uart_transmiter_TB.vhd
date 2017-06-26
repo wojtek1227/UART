@@ -57,6 +57,7 @@ begin
 STIMULUS: process
 begin  -- of stimulus process
 --wait for <time to next event>; -- <current time>
+	wait for 10 ns;
 	RST <= '1';
 	CE <= '0';
 	LOAD_DATA <= '0';
@@ -70,10 +71,18 @@ begin  -- of stimulus process
 	wait for 2 ns;
 	LOAD_DATA <= '0';
 	wait for 20 ns; 
-	CE <= '1'; 
-	wait for 20 ns;
+	CE <= '0';
+	wait for 3 ns;
+	RST <= '1';
+	wait for 3 ns;
+	RST <= '0';
+	wait for 10 ns;
+	LOAD_DATA <= '1';
+	wait for 40 ns;
 	CE <= '1';
-	LOAD_DATA <= '0';
+	wait for 10 ns;
+	Din <= "10101110";
+	wait for 10 ns;
 	
 	
     wait for 1 us;	 

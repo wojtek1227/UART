@@ -55,12 +55,10 @@ begin
 			TX_READY <= '1';
 		elsif rising_edge(CLK) then
 			if CE = '1' then
-				--State Machine
 				case State is
 					when idle =>
 						if LOAD_DATA = '1' then
 							data_reg <= Din;	--Saving data to send
-							
 							TX_READY <= '0';
 							sent_bits := 0;
 							State <= Start;
