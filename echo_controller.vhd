@@ -2,7 +2,7 @@
 --
 -- Title       : echo_controller
 -- Design      : uart
--- Author      : 
+-- Author      : Wojciech Caputa
 -- Company     : 
 --
 -------------------------------------------------------------------------------
@@ -40,30 +40,40 @@ end echo_controller;
 --}} End of automatically maintained section
 
 architecture echo_controller of echo_controller is 
-	signal received: std_logic_vector(1 downto 0);
+signal prev_RX_flag: std_logic := '0';
+signal prev_TX_ready: std_logic := '0';
+	--signal received: std_logic;
+	signal LOAD: std_logic;
 begin
 	
 	-- enter your statements here --
 	process(RST, CLK)
+		variable received: std_logic;
 	begin
 		if RST = '1' then
-			LOAD_DATA <= '0';
-			received <= (others => '0');
+			LOAD <= '0';
+			received := '0';
 		elsif rising_edge(CLK) then
 			if CE = '1' then
-				if received = "01" and TX_ready = '1' then 
-					LOAD_DATA <= '1';
-				else
-					LOAD_DATA <= '0';
-					received <= received(0) & RX_flag;
+				prev_RX_flag <= RX_flag;
+				prev_TX_ready <= TX_ready;
+				if prev_RX_flag = '0' and RX_flag = '1' then
+					received := '1';
+				end if;
+				
+				if received = '1' then
+					if TX_ready = '1' then
+						LOAD <= '1';
+					elsif prev_TX_ready = '1' and TX_ready = '0' then
+						received := '0';
+						LOAD <= '0';
+					end if;
 				end if;
 			end if;
+			
 		end if;
-		
-		
-		
-		
 	end process;
 	
+	LOAD_DATA <= LOAD;	
 	
 end echo_controller;

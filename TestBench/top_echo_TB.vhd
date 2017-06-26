@@ -93,7 +93,27 @@ begin
 	RX <= '0';		  -- bit 7
 	wait for 512 ns;
 	RX <= '1';		  -- stop bit
-	wait for 30 us;	 
+	wait for 512 ns;
+	RX <= '0';		  -- start bit
+	wait for 512 ns; 
+	RX <= '1';		  -- bit 0
+	wait for 512 ns; 
+	RX <= '1';		  -- bit 1
+	wait for 512 ns;
+	RX <= '1';		  -- bit 2
+	wait for 512 ns;
+	RX <= '0';		  -- bit 3
+	wait for 512 ns;
+	RX <= '1';		  -- bit 4
+	wait for 512 ns; 
+	RX <= '0';		  -- bit 5
+	wait for 512 ns;
+	RX <= '1';		  -- bit 6
+	wait for 512 ns;
+	RX <= '1';		  -- bit 7
+	wait for 512 ns;
+	RX <= '1';		  -- stop bit
+	wait for 10 us;	 
 	END_SIM <= TRUE;
 	wait;	
 	end process;
