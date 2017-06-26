@@ -31,7 +31,6 @@ entity echo_controller is
 		CE : in STD_LOGIC;
 		RST : in STD_LOGIC;
 		RX_flag : in STD_LOGIC;
-		RX_error : in STD_LOGIC;
 		TX_ready : in STD_LOGIC;
 		LOAD_DATA : out STD_LOGIC
 		);

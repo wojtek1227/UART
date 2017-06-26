@@ -32,8 +32,7 @@ entity uart_receiver is
 		CE : in std_logic;
 		RX : in std_logic;
 		Dout : out std_logic_vector(7 downto 0);
-		RX_flag	: out std_logic;
-		RX_error : out std_logic
+		RX_flag	: out std_logic
 		);
 end uart_receiver;
 
@@ -61,6 +60,8 @@ begin
 		if RST='1' then
 			Dout <= (others => '0');
 			RX_flag <= '0';
+			State <= Idle;
+			data_reg <= (others => '0');
 		elsif rising_edge(CLK) then
 			if CE = '1' then
 				case State is
@@ -96,7 +97,6 @@ begin
 									State <= Idle;
 									Dout <= data_reg;
 								else
-									RX_error <='1';
 									State <= Idle;
 								end if;
 							else

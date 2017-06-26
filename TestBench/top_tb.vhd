@@ -11,11 +11,9 @@ architecture tb_arch of top_tb is
 		port(
 			CE : in STD_LOGIC;
 			CLK : in STD_LOGIC;
-			CLK16 : in std_logic;
 			LOAD_DATA : in STD_LOGIC;
 			RST : in STD_LOGIC;
 			Din : in STD_LOGIC_VECTOR(7 downto 0);
-			RX_error : out STD_LOGIC;
 			RX_flag : out STD_LOGIC;
 			TX_ready : out STD_LOGIC;
 			Dout : out STD_LOGIC_VECTOR(7 downto 0)
@@ -24,13 +22,10 @@ architecture tb_arch of top_tb is
 	-- Stimulus signals - signals mapped to the input and inout ports of tested entity
 	signal CE : std_logic;
 	signal CLK : std_logic;
-	signal CLK16 : std_logic;
 	signal LOAD_DATA : std_logic;
 	signal RST : std_logic;
 	signal Din : std_logic_vector(7 downto 0);
 	-- Observed signals - signals mapped to the output ports of tested entity 
-	signal RX_error : std_logic;
-	Signal RX_flag : std_logic;
 	signal TX_ready : std_logic;
 	signal Dout : std_logic_vector(7 downto 0);
 	
@@ -44,12 +39,9 @@ begin
 	port map (
 		CE => CE,
 		CLK => CLK,
-		CLK16 => CLK16,
 		LOAD_DATA => LOAD_DATA,
 		RST => RST,
 		Din => Din,
-		RX_error => RX_error,
-		RX_flag => RX_flag,
 		TX_ready => TX_ready,
 		Dout => Dout
 		); 
@@ -69,22 +61,24 @@ begin
 		LOAD_DATA <= '0';
 		wait for 10 ns;
 		Din <= "01010111";
+		wait for 20 ns;
+		CE <= '0';
+		wait for 100 ns;
+		CE <= '1';
+		wait for 100 ns;
+		CE <= '0';
+		wait for 20 ns;
+		RST <= '1';
+		wait for 5 ns;
+		RST <= '0';
+		wait for 20 ns;
+		CE <= '1';
 		wait for 290 ns;
 		LOAD_DATA <= '1';
-		wait for 40 ns;
-		LOAD_DATA <= '0';
-		wait until RX_flag = '1';
-		Din <= "11010111";
-		wait for 5 ns;
-		LOAD_DATA <= '1';
-		wait for 10 ns;
-		LOAD_DATA <= '0';
-		wait until RX_flag = '1';
-		Din <= "11110111";
-		wait for 5 ns;
-		LOAD_DATA <= '1';
-		wait for 10 ns;
-		LOAD_DATA <= '0';
+		wait for 300 ns;
+		Din <= "10110111";
+		wait for 340 ns;
+		Din <= "11010110";
 		wait for 1 us;	 
 		END_SIM <= TRUE;
 		--	end of stimulus events
@@ -95,33 +89,18 @@ begin
 	begin
 		if END_SIM = FALSE then
 			CLK <= '0';
-			wait for 16 ns; 
-		else
-			wait;
-		end if;
-		if END_SIM = FALSE then
-			CLK <= '1';
-			wait for 16 ns;
-		else
-			wait;
-		end if;
-	end process;
-	
-	CLOCK_CLK16 : process
-	begin
-		if END_SIM = FALSE then
-			CLK16 <= '0';
 			wait for 1 ns; 
 		else
 			wait;
 		end if;
 		if END_SIM = FALSE then
-			CLK16 <= '1';
+			CLK <= '1';
 			wait for 1 ns;
 		else
 			wait;
 		end if;
 	end process;
+
 	
 end tb_arch;
 
