@@ -39,8 +39,8 @@ end echo_controller;
 --}} End of automatically maintained section
 
 architecture echo_controller of echo_controller is 
-signal prev_RX_flag: std_logic := '0';
-signal prev_TX_ready: std_logic := '0';
+	signal prev_RX_flag: std_logic := '0';
+	signal prev_TX_ready: std_logic := '0';
 	--signal received: std_logic;
 	signal LOAD: std_logic;
 begin

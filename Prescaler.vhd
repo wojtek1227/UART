@@ -29,11 +29,11 @@ end Prescaler;
 
 
 architecture Prescaler of Prescaler is
-
-signal DIVIDER: std_logic_vector(4 downto 0) := (others => '0');	-- internal divider register 
-constant divide_factor: integer := 16;			-- divide factor user constant
-												-- remember to adjust lenght of DIVIDER register when divide_factor is being changed
-
+	
+	signal DIVIDER: std_logic_vector(4 downto 0) := (others => '0');	-- internal divider register 
+	constant divide_factor: integer := 16;			-- divide factor user constant
+	-- remember to adjust lenght of DIVIDER register when divide_factor is being changed
+	
 begin 
 	process (CLK, CLR)
 	begin
@@ -49,8 +49,8 @@ begin
 			end if;
 		end if;
 	end process;
-
-CEO <= '1' when DIVIDER = (divide_factor-1) and CE = '1' else '0';
+	
+	CEO <= '1' when DIVIDER = (divide_factor-1) and CE = '1' else '0';
 	
 end Prescaler;
 

@@ -100,7 +100,7 @@ begin
 			wait;
 		end if;
 	end process;
-
+	
 	
 end tb_arch;
 
